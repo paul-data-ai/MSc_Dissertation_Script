@@ -12,7 +12,7 @@ def get_api_response(url):
 
 import logging
 from urllib.parse import quote
-import pandas as pd
+# import pandas as pd
 
 
 @app.route('/ask_and_get/', methods=['GET'])
