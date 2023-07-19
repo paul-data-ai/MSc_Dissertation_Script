@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import requests
 import os
+from collections import OrderedDict
 
 app = Flask(__name__)
 
@@ -92,12 +93,11 @@ def ask_and_get():
                 
                 route_info[index]['legs'].append(leg_info)
 
-        # sorted_routes = sorted(route_info.values(), key=lambda x: x['est. duration'])
-
-        # sorted_route_info = {key: route for index, route in enumerate(sorted_routes)}
+        sorted_routes = sorted(route_info.values(), key=lambda x: x['duration'])
+        sorted_route_info = OrderedDict((f"route{index + 1}", route) for index, route in enumerate(sorted_routes))
 
         print (route_info.keys())
-        return jsonify(route_info[0])
+        return jsonify(route_info)
     else:
         return jsonify({'error': 'Try modifying the origin or destination'})
 
