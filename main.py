@@ -17,7 +17,7 @@ import json
 # import pandas as pd
 
 
-@app.route('/ask_and_get/', methods=['GET'])
+@app.route('/get_directions/', methods=['GET'])
 def ask_and_get():
     origin = request.args.get('origin')
     destination = request.args.get('destination')
