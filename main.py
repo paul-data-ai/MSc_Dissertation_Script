@@ -13,6 +13,7 @@ def get_api_response(url):
 
 import logging
 from urllib.parse import quote
+import json
 # import pandas as pd
 
 
@@ -75,29 +76,30 @@ def ask_and_get():
         route_info = {}
         for index, route in enumerate(route_options):
             route_info[index] = {
-                'startDateTime': route['startDateTime'],
-                'arrivalDateTime': route['arrivalDateTime'],
+                'startBy': route['startDateTime'],
+                'arrivedBy': route['arrivalDateTime'],
                 'duration': route['duration'],
                 'alternativeRoute': route['alternativeRoute'],
                 'legs': []
             }
             
             for leg in route['legs']:
-                leg_info = {
-                    'instructionSummary': leg['instruction']['summary'],
-                    'departurePoint': leg['departurePoint']['commonName'],
-                    'arrivalPoint': leg['arrivalPoint']['commonName'],
-                    'mode': leg['mode']['name'],
-                    'google_maps_link' : f"https://www.google.com/maps/dir/?api=1&origin=?{quote(leg['departurePoint']['commonName'])}&destination={quote(leg['arrivalPoint']['commonName'])}&travelmode={leg['mode']['name']}"
-                }
-                
+                leg_info = OrderedDict()
+                leg_info['destination'] = leg['arrivalPoint']['commonName']
+                leg_info['_origin'] = leg['departurePoint']['commonName']
+                leg_info['__Summary'] = leg['instruction']['summary']
+                leg_info['mode'] = leg['mode']['name']
+                leg_info['mps_link'] = f"https://www.google.com/maps/dir/?api=1&origin={quote(leg['departurePoint']['commonName'])}&destination={quote(leg['arrivalPoint']['commonName'])}&travelmode={leg['mode']['name']}"
+                        
                 route_info[index]['legs'].append(leg_info)
 
         sorted_routes = sorted(route_info.values(), key=lambda x: x['duration'])
         sorted_route_info = OrderedDict((f"route{index + 1}", route) for index, route in enumerate(sorted_routes))
 
-        print (route_info.keys())
-        return jsonify(route_info)
+        # json_response = json.dumps(sorted_route_info, indent=4, sort_keys=True)
+
+        # print (route_info.keys())
+        return jsonify(sorted_route_info)
     else:
         return jsonify({'error': 'Try modifying the origin or destination'})
 
